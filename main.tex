@@ -1,0 +1,871 @@
+\documentclass[oupdraft]{sysbio}
+% \usepackage[colorlinks=true, urlcolor=citecolor, linkcolor=citecolor, citecolor=citecolor]{hyperref}
+\usepackage{url}
+
+\usepackage{indentfirst}
+
+\usepackage{xcolor}
+%\newcommand{\CHECK}[1]{ {\color{blue} #1} }
+\newcommand{\TODO}[1]{{\color{red} #1} }
+
+\newcommand{\beginsupplement}{%
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+        \setcounter{section}{0}
+        \renewcommand{\thesection}{S\arabic{section}}%
+        \clearpage%\onecolumn
+        \begin{center}
+        ~\\{Supplementary Materials}\\~\\
+        \end{center}
+}
+
+\usepackage{xspace}
+\newcommand{\bigO}{\mathcal{O}}
+%\newcommand{\PLH}{PLWH\xspace}
+\newcommand{\PLWH}{sample\xspace}
+
+\usepackage{booktabs}
+\usepackage{arydshln}
+
+\usepackage{xfrac}
+
+\newcommand{\D}{D}
+\newcommand{\ta}[1][A]{t'}
+\newcommand{\tb}{t'}
+
+% Add history information for the article if required
+%\history{Received Month X, 20XX;
+%revised Month X, 20XX}
+
+\begin{document}
+
+% Title of paper
+\title{HIV Care Prioritization using Phylogenetic Branch Length}
+% Each important word in the title should begin with a capital letter
+
+% List of authors, with corresponding author marked by asterisk
+\author{Niema Moshiri$^{1}$, Davey M. Smith$^{2}$, and
+Siavash Mirarab,$^{3,\ast}$\\[4pt]
+% Author addresses
+\textit{$^{1}$~Department of Computer Science and Engineering, University of California, San Diego, La Jolla, 92093, USA}
+\\
+\textit{$^{2}$~Department of Medicine, University of California, San Diego, La Jolla, 92093, USA}
+\\
+\textit{$^{3}$~Department of Electrical and Computer Engineering, University of California, San Diego, La Jolla, 92093, USA}
+\\[2pt]
+% E-mail address for correspondence
+\textit{*Siavash Mirarab, Department of Electrical and Computer Engineering, University of California, San Diego, 9500 Gilman Drive, Mail Code 0407, La Jolla, USA, 92093-0407, 858-822-6245, smirarab@ucsd.edu}}
+% Identify the name, address, telephone/fax numbers, and e-mail address for the author who will receive proofs and be designated the "corresponding author" in text.
+
+% Running headers of paper:
+\markboth%
+% First field is the short list of authors
+{Moshiri, Smith, Mirarab}
+% Second field is the short title of the paper
+{ProACT}
+% This should be shortened version of the title and no greater than 50 characters
+
+\maketitle
+
+\begin{abstract}
+{In HIV epidemics,  the structure of the transmission network can be dictated by just a few individuals. Public health intervention, such as ensuring people living with HIV adhere to antiretroviral therapy (ART) and are continually virally-suppressed, can help control the spread of the virus. However, such intervention requires utilizing the limited public health resource allocations. As a result, the ability to determine which individuals are most at-risk of transmitting HIV could allow public health officials to focus their limited resources on these individuals. Molecular epidemiology suggests an approach: prioritizing people living with HIV based on patterns of transmission inferred from their sampled viral sequences. In this paper, we introduce ProACT (\textbf{Pr}i\textbf{o}ritization using \textbf{A}n\textbf{C}es\textbf{T}ral edge lengths), a  phylogenetic approach for prioritizing individuals living with HIV.
+ProACT uses a simple idea: ordering individuals by their terminal branch length in the phylogeny of their virus. 
+In simulations and also on a dataset of HIV-1 subtype B \textit{pol} sequences obtained in San Diego, we show that this simple strategy improves the effectiveness of prioritization compared to state-of-the-art methods that rely on monitoring the growth of transmission clusters defined based on genetic distance.}
+{HIV, epidemiology, phylogenetics}
+\end{abstract}
+\newline
+
+
+The transmission of Human Immunodeficiency Virus (HIV) resembles scale-free networks \citep{Wertheim2014},
+in which the majority of the structure of the network is dictated by just a few individuals,
+a phenomenon likely resulting from the scale-free properties of sexual contacts and injection drug use along which HIV is transmitted \citep{Little2014,Schneeberger2004}.
+As a result, public health intervention may be more effective when targeted at people living with HIV  who are more likely to grow the transmission network.
+However, the best method to target individuals for specific interventions remains an open question, and
+the best strategy will likely depend on the specific intervention planned.
+
+One form of intervention aiming to reduce future transmissions is continued treatment. 
+Antiretroviral therapy (ART) is an effective treatment of HIV that suppresses the HIV virus in the majority of cases, stops the progression of the disease, and prevents onward transmission to an uninfected sexual partner, provided the individual continuously adheres to the treatment \citep{Cohen2011}.
+%In addition to reducing risk of transmission at the molecular level, adherence to ART is associated with %may yield
+%a reduction of risky behavior as well \citep{Bunnell2006}.
+In most advanced health care systems, ART is made available routinely  to newly diagnosed patients, but several opportunities for further intervention remains available. 
+Most importantly, not every diagnosed person initiates ART and not all cases of ART initiation lead to a sustained suppression of the virus through time. 
+Individuals who start ART but fail to sustain it or who are otherwise unsuppressed can still infect others. 
+Thus, a possible intervention is to use public health resources to help diagnosed individuals to stay on ART and to remain continually suppressed \citep{Poon2016}. 
+Such interventions require allocation of clinical staff who would follow up with patients to provide them further assistance in adherence sustenance of ART.
+The health system can also provide  increased testing to these individuals to ensure suppression.  
+
+A second family of interventions involves targeting HIV negative and undiagnosed HIV positive individuals.
+The health system can potentially use partner tracing \citep{Gotz2014} to identify the sexual partners of high-priority diagnosed individuals (as best as possible), test these high risk individuals, and offer them either treatment (for positives) or prevention through PrEP (for negatives). 
+Finally, if the  priority status of individuals shows any association with specific geographical or demographic groups (beyond known associations), the public health system can design strategies for further outreach, testing, and PrEP administration for the impacted groups.
+
+All three types of intervention   are  costly and cannot be undertaken for every known individual.
+If diagnosed people at risk of not being suppressed could be predicted accurately, the public health system could focus their limited resources on these individuals,
+Thus, a natural question surfaces: which individuals are most at-risk of transmitting HIV? %the virus?
+However, predicting tendency for future transmissions is difficult and can also be problematic if undertaken primarily based on demographic or behavioral traits.
+
+Molecular epidemics suggest an alternative method:
+prioritizing  for intervention solely based on patterns of transmission inferred from HIV sequence data~\citep{Bbosa2019,Villandre2019,Oster2018,Ragonnet-Cronin2019,Wertheim2018,Wertheim2011,Wertheim2014,Smith2009}.
+The inference of transmission networks using phylogenetic or distance-based methods has been the subject of much research \cite[e.g.][]{Leitner2018,Pond2018,Ragonnet-Cronin2013,Prosperi2011}.
+However, in this work, instead of being concerned with inferring exact patterns of transmissions, we ask the following question:
+given molecular data from a set of \textit{sequenced} HIV positive individuals (``\PLWH{s}'' for short), %presumably all with access to ART, 
+who should be prioritized for further intervention? 
+
+Prioritizing care based on molecular epidemics has been studied recently. 
+\citet{Wertheim2018} present a method for prioritizing \PLWH{s} based on performing transmission clustering (i.e., grouping individuals with low viral genetic distance into \textit{transmission clusters}) and ordering clusters  by growth rate.
+On a large dataset from New York, they show that the approach is able to predict individuals who have relatively larger numbers of transmission links in the near future.
+\citet{Moshiri2018} have studied the same question in simulations and have shown that monitoring cluster growth can be used for predicting future transmissions substantially better than a random guess, whether clusters are defined using genetic distances or using phylogenetic methods. 
+Most recently, \citet{Balaban2019}  showed in simulations that using a cluster-monitoring approach similar to that of \citet{Wertheim2018}  but defining clusters  using a min-cut optimization problem gives a small but consistent improvement over defining clusters using genetic distances. 
+
+%The viral phylogeny is dependent upon the transmission history of the virus, and as a result, properties of the transmission history can be inferred from the viral phylogeny \citep{Leitner2018}.
+In this paper, we introduce a new method for ordering \PLWH{s} based  on their phylogenetic relationships. Instead of relying on clustering individuals and then ordering clusters based on their growth, we seek to order individuals without clustering and without reliance on parametric models. 
+Instead, we seek to simply exploits patterns in the phylogeny, and in particular, in branch lengths. 
+%and other attributes related to the recency of their infection.
+
+
+\section{Materials and Methods}
+ProACT (\textbf{Pr}i\textbf{o}ritization using \textbf{A}n\textbf{C}es\textbf{T}ral edge lengths) takes as input the inferred phylogenetic relationships between sampled HIV viruses (e.g. from the \textit{pol} region), rooted using an outgroup or clock-based methods (e.g. midpoint or MinVar-root, \citet{Mai2017}). 
+ProACT simply orders \PLWH{s} in order of incident branch length of their associated virus, and it breaks ties based on incident branch lengths of parent nodes, then those of grandparent nodes, etc.
+We first motivate the approach and then present a formal definition of the method.
+
+ProACT is motivated and tested in a context similar to the present day health care systems that enjoy enough resources to provide ART to all (or at least most) diagnosed individuals.
+Thus, each \PLWH can be assumed to be given ART at a time close to when their HIV is sequenced, but they may fail to be suppressed for the remainder of their life.
+These conditions describe the common practice of care in many advanced and (increasingly) developing countries. 
+
+
+\subsection{Motivating the Approach}
+
+We start with the observation that, in simulations (described in detail below),
+when a phylogeny is inferred from sequences obtained at a given time point in an epidemic,
+the more a node transmits, the shorter its incident branch length tends to be
+%the individuals who are most at-risk of transmitting the virus in the near future have short incident branch lengths 
+(Figs.~1d--e and~S2).
+%The more a node transmits, the shorter its length tends to be (Fig.~1d).
+Using the Kendall's Tau-b test \citep{Kendall1938}, in a ten-year epidemic simulation, we found a statistically significant anticorrelation between the incident branch lengths of individuals sampled within the first 9 years of the epidemic and the number of individuals they infected over the final year of the epidemic. This held for true ($\tau_B=-0.0431$, $p\ll 10^{-10}$) and inferred ($\tau_B=-0.0354$, $p\ll 10^{-10}$) phylogenetic trees.
+%In fact, as we will show, there is a statistically significant correlation between terminal branch length and propensity to transmit in many situations.
+Though not obvious, this observation can be explained by the constraints placed upon the viral phylogeny by the transmission history (Fig.~1a--c).
+
+\begin{figure}[!tp]
+\centering
+%\includegraphics[width=0.995\textwidth]{diagram.pdf}\\
+%\includegraphics[width=0.425\textwidth]{avg_edgelength_vs_time_ftmv.pdf}%
+%\includegraphics[width=0.57\textwidth]{edgelength_vs_efficacy.pdf}\\\vspace{-5pt}
+%~\hfill (d)\hfill~~~~~\hfill
+%(e)\hfill~\\~\\
+\includegraphics[width=\textwidth]{Fig1.pdf}
+\caption{The effect of new transmissions on incident branch lengths. (a) Individual $A$ transmits to individual $B$ and $C$ at times at  $t_1$ and $t_2$, respectively. (b) Viral samples are obtained from individuals $A$, $B$, and $C$ at times $t_A$, $t_B$, and $t_C$. The viral phylogeny of samples is constrained by each transmission event's bottleneck, and the most likely phylogeny matches the transmission history (Left), but in the less likely deeper coalescence, it may not match (Right). (c) Moving from the phylogeny observed at time $t_B$ to the phylogeny at time $t_C$, the branch length incident to individual A  shortens upon the addition of individual C  in the likely event that the coalescence of the lineage from $C$ with the lineage from $A$ is more recent than its coalescence with the lineage from $B$ (Left), or the branch length incident to individual A remains constant in the event of a less likely deeper coalescence (Right). Regardless, the length of the branch incident to individual A never increases.
+In simulation, we can observe this trend: as time progresses, the incident branch length of each individual tends to decrease, both in true (Fig.~S1) and inferred (d) phylogenies, and as the number of transmissions from a given individual increases, the distribution of incident edge length tends to decrease, both in true and inferred phylogenies, labeled ``True'' and ``Est.,'' respectively (e).}
+\label{fig:diagram}
+\end{figure}
+
+
+In the context of HIV epidemiology in many advanced countries,
+\PLWH{s} are typically sequenced
+upon beginning Antiretroviral Therapy (ART).
+Let's assume for simplicity that every individual in the given dataset has at some point initiated ART,
+meaning future transmissions by individuals in the dataset must happen only if the source stops ART or is otherwise unsuppressed. %for other reasons.
+Given a viral phylogeny containing all known \PLWH{s},
+if, in the future,
+individual $u$ in the dataset transmits to individual $v$,
+there are two possible scenarios regarding the placement of the leaf corresponding to $v$ in the existing (true) phylogeny:
+(1) $v$ is placed on the edge incident to $u$, so the edge incident to $u$ will shorten, or (2) $v$ is not placed on the edge incident to $u$, so the edge incident to $u$ will remain the same length.
+Although Scenario 2 is possible,
+Scenario 1 is far more likely \citep{Romero-Severson2016}, and note that the terminal branch lengths do not increase in either scenario. 
+Thus, as time goes by, the terminal branch can only shorten or stay fixed, and it will most often shorten because of new transmissions by the \PLWH associated with that terminal branch.
+This pattern, easily observed in simulations (Fig.~1d), leads to shorter branches for \PLWH{s} who have transmitted recently.
+%Since short-terminal branch nodes are likely to have transmitted recently, they are also likely to transmit in the near future because they are likely not to be  suppressed. 
+%This likely lack of suppression makes them a good candidate for intervention. 
+
+Note that \PLWH{s} who transmit are unsuppressed. The first time they infect others, their terminal branch length is likely to decrease, and further transmissions further decrease their terminal branch lengths (Fig.~1d). 
+Thus, one expects nodes with smaller incident branch length to be more likely to have transmitted since their sampling time.
+%, and by extrapolation, in the near future.
+%This pattern is what we observe in simulations (Fig.~S2).
+Moreover, they are also likely to transmit in the near future because they are likely not to be  suppressed. 
+The higher probability of a lack of suppression makes them a good candidate for intervention. 
+%This simple observation, that nodes with short branches tend to transmit more often, is the central 
+
+\subsection{Formal Description}
+ProACT takes as input a {\em rooted} phylogenetic tree $T$ of viral samples. %and a list of sample times.
+Let $bl(u)$ denote the incident branch length of node $u$,
+and assume the incident branch length of the root of $T$ is 0.
+Let $a(u)$ denote the vector of ancestors of node $u$ (including $u$),
+where $a(u)_1$ is $u$,
+$a(u)_2$ is the parent of $u$,
+$a(u)_3$ is the grandparent of $u$, etc.
+Let $r(u)$ denote the length of the path from node $u$ to the root of $T$,
+i.e., $r(u)=\sum_{v\in a(u)}{bl(v)}$.
+ProACT sorts the leaves of $T$ in ascending order of $bl(a(u)_1)$,
+with ties broken by $bl(a(u)_2)$, then by $bl(a(u)_3)$, etc.
+Note that, for two leaves $u$ and $v$,
+$|a(u)|$ may be less than $|a(v)|$,
+in which case, for all $|a(u)|<i\le|a(v)|$,
+$\frac{r(u)}{|a(u)|-1}$ (i.e., average branch length along the path from $u$ to the root of $T$) is compared with $bl(a(v)_i)$ instead.
+If two nodes are equal in all comparisons, if the user provides sample times, the earlier sample time is given higher priority; otherwise, ties are broken arbitrarily.
+%Given a rooted tree $T$, let $\D(u)$ denote the set of all leaf descendants of an internal node $u$ and 
+%let $t(l)$ denote the sample time of leaf $l$.
+%Let $\ta(u)=\sfrac{1}{\lvert \D(u)\rvert}\sum_{v\in \D(u)}{t(u)}$ denote the average sample time of leaf descendants below an internal $u$.
+%Let $\bar{p}(l)$ be the path from $l$ to the root excluding $l$, and for each leaf $l$ let $\tb(l)=\min_{u\in \bar{p}(l)} \ta(u)$ be  the minimum average sample time assigned to any of it ancestor nodes (not including itself).
+%ProACT orders leaves in the descending order (i.e., from the most recent to the oldest) of the tuple $(\tb(l),t(l))$.
+%Note that $\ta(u)$ values can be computed in $\Theta(n)$ for all nodes $u$ in $T$ using a post-order traversal. 
+Because sorting is needed, for a tree with $n$ leaves,
+assuming branch lengths are fairly unique,
+the ProACT algorithm runs in $\bigO(n\log n)$ time. Scalable methods exist both for the inferring~\citep[e.g.][]{Price2010,Nguyen2015} and rooting~\citep[e.g.][]{Mai2017} very large trees.
+
+%To see the intuition behind ProACT, imagine that the phylogenetic tree is made up of several clades, such that \PLWH{s} belonging to each clade infect others with a fixed rate, but there is a different rates for different clades. 
+%For each clade, the maximum likelihood estimate of the rate of that clade is the inverse of the average infection times below that node (assuming everyone in the clade is infected by others in the clade). 
+%Then, ProACT is simply ordering clades based on their maximum likelihood rate, assuming they have a unique rate, and is ordering the clades based on these ML estimated rates. 
+%Clearly, ordering based on rate of infection is justified.
+
+\section{Results}
+We evaluate ProACT on simulated and real data. 
+
+\begin{table*}[!t]
+\begin{center}
+\begin{tabular}{c c}
+\toprule
+\textbf{Parameter~~~~~~} & \textbf{Values}\\
+\toprule
+ART Initiation Rate ($\lambda_+$, year$^{-1}$)~~~~~~ & \textbf{1}, 2, 4\\
+\hdashline
+ART Termination Rate ($\lambda_-$, year$^{-1}$)~~~~~~ & 0.12 (0.25x), 0.24 (0.5x),\\
+~~~~~~ & \textbf{0.48 (1x)}, 0.96 (2x), 1.92 (4x)\\
+\hdashline
+Expected Degree $\left(E_d\right)$~~~~~~ & \textbf{10}, 20, 30\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{Varied HIV simulation parameters. Values for the base model condition are shown in bold.}
+\label{tab:favites}
+\end{table*}
+
+\subsection{Simulation Results}
+
+In order to test ProACT's efficacy, we performed a series of simulation experiments in which we used FAVITES \citep{Moshiri2018} to generate a sexual contact network, transmission network, viral phylogeny, and viral sequences emulating HIV transmission in San Diego from 2005 to 2014 (Material and Methods).
+We have simulated nine model conditions (Table~1) by starting from a base model condition and varying the rate of ART initiation $(\lambda_+)$, rate of ART termination $(\lambda_-)$, and the expected degree of the sexual network $(E_d)$.
+We subsequently inferred and rooted a phylogeny of all sequences obtained during the first 9 years of the simulation.
+Then, ProACT was run on the true and inferred full trees and subsampled trees.
+
+
+To measure the efficacy of a given prioritization,
+we compute the number of infections caused by each individual during the 10th year of the simulation (our outcome measure).
+Then, we measure the cumulative moving average (CMA) of the outcome measure by the top \PLWH{s}. 
+The higher the CMA in a prioritization, the higher the number of future transmissions from these {top} individuals, and thus, the higher the effectiveness of the prioritization. 
+Moreover, sorting individuals by their outcome measure (known to us in simulations) enables us to compute the optimal CMA curve, and the mean number of transmissions gives us the expected value of the CMA for a random prioritization.
+Across experimental conditions, the maximum and random expectations vary.
+Thus, to enable proper comparison of {effects of prioritization} across conditions,
+we also report an adjusted CMA normalizing above the random prioritization and over the optimal prioritization (see Materials and Methods).
+For this Adjusted Transmissions/Person metric, 1 indicates the optimal ordering and 0 indicates an ordering that is no better than random (a negative value indicates an ordering that is \textit{worse} than random). 
+Finally, we use Kendall's Tau-b coefficient to measure the correlation between the optimal ordering and the ordering obtained using each method. 
+Kendall's Tau-b is a rank correlation coefficient adjusted for ties \citep{Kendall1938} with values ranging between -1 and 1, with -1 signifying perfect inversion, 1 signifying perfect agreement, and 0 signifying the absence of association.
+
+% \begin{figure}[!tp]
+% \centering
+% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-2.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-4.pdf}\\\vspace{-10pt}
+% {\small (a)}\\
+% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-2x}.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-4x}.pdf}\\\vspace{-10pt}
+% {\small (b)}\\
+% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.5x}.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.25x}.pdf}\\\vspace{-10pt}
+% {\small (c)}\\
+% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-10.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-20.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-30.pdf}\\\vspace{-10pt}
+% {\small (d)}\\
+% \caption{ProACT performance on datasets simulated using FAVITES.
+% Cumulative Moving Average (CMA) of adjusted number of transmissions per person across the first decile of prioritized \PLWH for each simulation parameter set.
+% The horizontal axis depicts the quantile of highest-prioritized \PLWH (e.g. $x=0.01$ denotes the top percentile),
+% and the vertical axis depicts their adjusted average number of transmissions per person (1 indicates the optimal ordering, and 0 indicates an ordering that is no better than random).
+% In our simulations, we varied three parameters of interest:
+% (a) the rate of ART initiation $(\lambda_+)$, (b-c) the rate of ART termination $(\lambda_-)$, and (d) the expected degree of the sexual network $(E_d)$.
+% The simulations were 10 years in length,
+% prioritization was performed 9 years into the simulation, and the adjusted average number of transmissions per person was computed during the last year of the simulation.
+% The curves labeled ``Cluster Growth'' denote prioritization by inferring transmission clusters using HIV-TRACE at year 9 of the simulation and sorting clusters in descending order of growth rate since year 8.
+% The curves labeled with percentages denote subsampled datasets.
+% All curves were calculated using 20 simulation replicates.
+% }
+% \label{fig:efficacy}
+% \end{figure}
+
+
+\begin{figure}[!tp]
+\centering
+%{\footnotesize
+%~\hfill(a)\hfill (b)\hfill~\\
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+%\\
+%~\hfill(c)\hfill (d)\hfill~\\
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_individual_n1000.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_individual.pdf}
+\includegraphics[width=\textwidth]{Fig2.pdf}
+%}
+\caption{Effectiveness of prioritization on simulated datasets. 
+The simulations were 10 years in length,
+prioritization was performed 9 years into the simulation, and the effectiveness of prioritization was computed during the last year of the simulation using four metrics (a-d).
+``Cluster Growth'' denotes prioritization by inferring transmission clusters using HIV-TRACE at year 9 of the simulation and sorting clusters in descending order of growth rate since year 8.
+All curves were calculated using 20 simulation replicates.
+(a) Cumulative Moving Average (CMA) of the number of transmissions per person across the first decile of prioritized \PLWH{s} for the default simulation parameter set (see Fig.~S4 for all model conditions, which show similar patterns).
+The horizontal axis depicts the quantile of highest-prioritized \PLWH{s} (e.g. $x=0.01$ denotes the top percentile), and the vertical axis depicts their average number of transmissions per person.
+Global average across all individuals (i.e., expectation under random ordering) is shown in red.
+The curves labeled with percentages denote subsampled datasets.
+(b) CMA of \textit{adjusted} number of transmissions per person for the default model condition (see Fig.~S5 for all model conditions, which show similar patterns). 
+For \textit{adjusted} Transmissions/Person, 1 indicates the optimal ordering and 0 indicates  random ordering.
+All other settings are similar to part a. 
+(c) Average of the raw number of transmissions per person for the top 1000 individuals (see Fig.~S3 for other counts) in a prioritized list vs. simulation parameter set (1000 individuals correspond to 1\%--6\% of all individuals across conditions). The violin plots are across 20 replicates and contain box plots with medians shown as white dots.
+Red horizontal lines show population mean (i.e., random prioritization).
+%and distribution means shown as dashed grey lines.
+(d) Kendall Tau-b correlation between the optimal ordering of \PLWH{s} (i.e., based on their number of transmissions in year 10) and the orderings by the two prioritization methods.
+See Figure~S6 for subsampled data. 
+Distributions are across 20 replicates and are shown for each simulation condition. 
+}\label{fig:efficacy-main}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+%\subsubsection{ProACT outperforms random prioritization across conditions---}
+\subsubsection{Default condition---}
+ProACT dramatically increased the performance compared to random ordering according to all of our outcome measures (Fig.~2).
+Focusing on the transmissions per person measure, while the population mean was 0.05, the ProACT's CMA was close to 0.15 for the top 1\% of prioritized \PLWH{s} and gradually reduced to 0.1 for the top 10\% (Fig.~2a).
+The top 1000 individuals in the ProACT ordering (3\% of the population)  transmitted {0.12} times (median across our 20 replicates), which was 2.4x  higher than the median population average (Fig.~2c; see also Fig.~S3 for numbers other than 1000).
+As desired, selecting fewer people from the top of ProACT prioritization resulted in more transmissions per person (Fig.~2a).
+Compared to optimal ordering, however, the adjusted score both increased and decreased as more individuals were selected (Fig.~2b). 
+The adjusted metric shows that while ProACT substantially outperformed random ordering, it did not come close to the effectiveness that could be achieved using the (hypothetical) perfect ordering. 
+The Kendall's Tau-b correlation also showed a positive correlation between ProACT ordering and optimal ordering;  although the correlation coefficient is far from perfect (Fig.~2d), the correlations are statistically significant in all replicates ($p<10^{-9}$; see Fig.~S7a).
+%The most clear signal for benefits of prioritization (e.g, a high CMA) is obtained for up to 10\% top-priority individuals (though exact values depend on the model condition). 
+
+
+
+
+%\subsubsection{ProACT outperforms cluster growth---}
+\citet{Wertheim2018} have presented a method for prioritizing \PLWH{s} by clustering individuals based on viral genetic distance, tracking the size of each cluster over time, and prioritizing clusters in descending order of the growth rate. The approach can be extended to also order individuals (i.e., individuals belonging to clusters with high growth rates are prioritized higher; see Materials and Methods for details).
+ProACT consistently outperformed prioritization using cluster growth  (Figs.~2).
+For example, the top 1000 individuals according to cluster growth transmitted on average to 0.06 other people, which, while higher than the population average, was half the 0.12 transmissions per person according to ProACT. 
+Kendall-Tau results similarly indicate that ProACT has better correlation with the optimal ordering.
+% \TODO{
+% The only exception was when the rate of stopping ART was lowered all the way to 0.25x, which corresponds to expected time of ART termination of 8.3 years.
+% In this condition where adherence was at its highest,
+% prioritization by cluster growth outperformed ProACT when using the full dataset.}
+
+\subsubsection{Impact of simulation parameters---}
+We then tested the impact of three simulation parameters, namely the rate of stopping ART, the rate of starting ART, and the node degree in the sexual network (Figs.~2cd,~S4, and~S5).
+
+As we increased the rate of stopping ART $\left(\lambda_{-}\right)$ (i.e., with lower adherence), the gap between ProACT and cluster growth grew.
+For example, the mean number of transmissions per person among the top 1,000 individuals chosen using ProACT and cluster growth were respectively 0.169 and 0.076 (a 1.21x improvement) for the condition with $\lambda_-=4$x (Fig.~2c). 
+This 1.21x improvement briefly increased to 1.26x and subsequently decreased to 1.01x, 0.69x, and 0.63x improvement as we reduced the rate or ART termination to 2x, 1x, 0.5x, and 0.25x.
+Kendall-Tau-b correlations show similar patterns (Fig.~2d);
+while almost all replicates of $\lambda_-=4$x have $p<10^{-20}$, for the 0.25x case, all replicates have $p>10^{-10}$ and one of the replicates has $p>10^{-3}$  (Fig.~S7a).
+    
+%Increasing the rate of infection, 
+%As  $\lambda_{-}$ decreased, ProACT's performance compared to optimal ordering tended to decrease, whereas cluster growth's performance compared to optimal ordering tended to increase; however, ProACT continued to outperform cluster growth for all but the $\lambda_-=$0.25X condition (Fig.~S5b--c).
+
+
+% \begin{figure}[!tp]
+% \centering
+% \includegraphics[width=0.493\textwidth]{results_efficacy_individual_n100.pdf}
+% \includegraphics[width=0.493\textwidth]{results_efficacy_individual_n1000.pdf}\\
+% \caption{Efficacy on datasets simulated using FAVITES. Average of the raw number of transmissions per person for the top $n$ individuals in a prioritized list vs. simulation parameter set across various values of $n$. The violin plots depicted are across 20 replicates and contain box plots with distribution medians shown as white dots and distribution means shown as dashed grey lines.}\label{fig:efficacy-vs-n}
+% \end{figure}
+
+
+
+
+As we increased the rate of starting ART $\left(\lambda_{+}\right)$ (i.e., with faster diagnoses), as expected, the raw number of new infections caused per capita  decreased (Fig.~2c, ~S4a).
+While ProACT remained effective in finding high priority individuals,
+its performance compared to optimal ordering slightly degraded with higher $\lambda_{+}$ (Figs.~2d and ~S5a).
+Also, the gap between ProACT and cluster growth decreased slightly.
+When observing the mean number of transmissions per person among the top 1,000 individuals chosen by each method (Fig.~2c),
+ProACT gave a 1.01x, 1.03x, and 0.71x improvement over cluster growth for $\lambda_{+}$ set to 1x, 2x, and 4x, respectively.
+%As $\lambda_{+}$ increased, neither ProACT nor prioritization by cluster growth were dramatically impacted, and ProACT consistently performed roughly twice as well as cluster growth (Fig.~S5a).
+
+
+Changing the expected number of sexual contacts per person $\left(E_d\right)$, which controls the speed of spread, did not have uniform effects (Figs.~2cd). 
+Increasing $E_d$ from 10 to 20 did not substantially impact the performance of ProACT. However, for $E_d=30$, we observed a small but noticeable reduction in the improvements of ProACT compared to the cluster growth (Figs.~2d and~S5d).
+
+
+
+
+\subsubsection{Impact of incomplete sampling---}
+Subsampling the total dataset to include $\sfrac{3}{4}$, $\sfrac{1}{2}$, or $\sfrac{1}{4}$ of all \PLWH{s} had only a marginal impact on the performance of ProACT according to the CMA metric  (Figs.~2ab,~S4,~S5). 
+%Inevitably, the raw number of new infections decreased as the dataset was subsampled (Fig.~S4). 
+%The benefit of ProACT and cluster growth with respect to optimal ordering reduced slightly at the $\sfrac{1}{4}$ sampling level (Figs.~S5).
+Only at 25\% sampling level did we observe a small reduction in the performance of ProACT compared to the optimal ordering. 
+%Despite the general robustness, small degradation in accuracy are observed at the $\sfrac{1}{4}$ sampling level. 
+For example, 
+with $\lambda_{+}=2$x, ProACT's performance remained quite similar across $\geq \sfrac{1}{2}$ sampling levels, but a reduction in performance was observed for the $\sfrac{1}{4}$ sampling level for both ProACT and  cluster growth  (Fig.~S5a).
+
+
+According to Kendall's Tau-b, which measures the entire order not just the top individuals, there was a more noticeable degradation in performance due to sampling (Fig.~S6). 
+In particular, reduced sampling increased the \textit{variance} across replicate simulations (note the wider distributions for reduced sampling in Fig.~S6).
+Moreover, statistical significance of the correlations degrades with lower sampling (Fig.~S7c--e).
+With  $\sfrac{1}{4}$ sampling, unlike full sampling, many model conditions include {\em some} replicates where the ProACT ordering is not significantly better than random according to Kendall's Tau-b.
+%Interestingly, for  $\lambda_{-}<1$x, ProACT's performance on  $\sfrac{1}{4}$ sampled datasets \textit{improved} relative to more complete sampling.
+%and interestingly, it actually outperformed all other levels of sampling for the most extreme condition. 
+%However, the efficacy of prioritization by cluster growth remained fairly consistent  for  $\lambda_{-}<1$x (Fig.~S5b--c).
+%Similarly, the performance of ProACT compared to optimal ordering improved with $\sfrac{1}{4}$ sampled datasets when sexual contact degree increased to $E_d\geq 20$ (Fig.~S5d).
+
+
+
+
+\subsubsection{Second order effects---}
+We next asked if prioritization is effective in detecting people whose contacts also transmit abundantly. 
+To do so, we explored a new outcome measure: the total number of transmissions from all contacts of a \PLWH. 
+Prioritizing \PLWH{s} whose contacts are likely to transmit can give public health officials a chance to find undiagnosed individuals (likely to transmit) through partner tracing from diagnosed individuals and to  prioritize PrEP for uninfected individuals in sexual contact with prioritized individuals. 
+%For this outcome measure, like the previous one, we report both CMA of the  {transmissions per neighbour} and the Kendall Tau's-b coefficient with respect to the optimal ordering. 
+
+
+
+
+% \begin{figure}[!tp]
+% \centering
+% {\footnotesize
+% ~\hfill(a)\hfill (b)\hfill~\\
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+% \\
+% %\includegraphics[width=0.493\textwidth]{results_efficacy_neighbors_n100.pdf}
+% ~\hfill(c)\hfill (d)\hfill~\\
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_n1000.pdf}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_neighbors.pdf}}
+% \caption{Neighbor transmissions non-tau
+% }\label{fig:efficacy-neighborss}
+% \end{figure}
+
+
+
+
+\begin{figure}[!tp]
+\centering
+%{\footnotesize
+%~\hfill(a)\hfill (b)\hfill~\\
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+%\\
+%~\hfill(c)\hfill (d)\hfill~\\
+%\includegraphics[width=0.47\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_neighbors_n1000.pdf}
+%\includegraphics[width=0.5\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_neighbors.pdf}%
+%\\
+%}
+\includegraphics[width=\textwidth]{Fig3.pdf}
+\caption{Second order effects. 
+(a) CMA of the number of infections from contacts of the top individuals according to each ordering; other settings similar to Fig.~2a. (b)
+Similar to  part (a) but adjusted for random and optimal ordering.
+(c)
+Number of transmissions from neighbours for the top 1000 individuals  in a prioritized list vs. simulation parameter set.
+ (d) 
+ Kendall Tau-b correlation between the optimal ordering of \PLWH{s}  and their ordering by the two prioritization methods.
+ See Figure~S8 for subsampled data. 
+ }
+\label{fig:efficacy-neighbors}
+\end{figure}
+
+
+
+
+\begin{figure}[!tp]
+\centering
+{\footnotesize
+%\includegraphics[width=0.5\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_tau_contacts.pdf}%
+\includegraphics[width=0.5\textwidth]{Fig4.pdf}%
+\\
+}
+\caption{ProACT captures sexual contact network degrees.
+ Kendall Tau-b correlation between the number of contacts of each individual and their ordering by the prioritization methods.
+ See Figure~S10 for subsampled data. 
+ }
+\label{fig:efficacy-conc}
+\end{figure}
+
+Across all model parameters, ProACT ordering outperformed random ordering and cluster growth according to the number transmissions per neighbors (Fig.~3).
+For example, contacts of the top 1000 individuals according to ProACT transmitted to 2.23 individuals on average (median across replicates), which is more than twice the number of transmissions by contacts across all individuals in the network (1.08).
+Just as with the previous outcome measure, advantages of ProACT over random prioritization or cluster growth were most pronounced for lower $\lambda_{+}$ and higher $\lambda_{-}$ (Fig.~3c). 
+The Kendall Tau-b coefficients for the correlation between ProACT and the optimal ordering were high (Figs.~3d and~S8); in fact, they were \textit{higher} for the transmissions from contacts compared to transmissions from the prioritized person (e.g. median coefficient was 0.084 for contacts and 0.033 for the individuals in the default condition). 
+These coefficients were highly significant across all models and sampling levels (Fig.~S9a).
+Thus, ProACT was even more effective in finding individuals with active contact than it was for finding individuals who were not suppressed. 
+These results were largely robust to reduced sampling, showing similar patterns of average performance but increased variance across replicates (Fig.~S8 and S9c--e).
+
+Further interrogating the properties of an individual and their ordering, we observed a substantial correlation between the number of contacts of \PLWH{s} in the sexual network and their position in the ProACT ordering (Fig.~4). 
+Thus, while ProACT only considers the phylogeny, it  prioritized those individuals that had high degrees in the sexual contact network (hidden to ProACT). 
+These correlations were strongest for networks with high degree and weakest when the rate of diagnosis was very high. 
+Reducing sampling did not substantially affect mean correlation but increased variance over replicates (Fig.~S10).
+
+
+
+
+
+\subsection{Real San Diego dataset}
+We next analyzed a dataset of 926 HIV-1 subtype B \textit{pol} sequences obtained in San Diego between 1996 and 2018.
+To evaluate ProACT accuracy,
+we divided the data into deciles, with each decile defining two sets: \textit{past} (sequences up to the decile) and \textit{future} (sequences after the decile). We inferred a phylogeny from the sequences  in the \textit{past} set using FastTree~2 \citep{Price2010}, %and IQ-TREE \cite{Nguyen2015}
+and we used ProACT to order all \PLWH{s} in this set. 
+We then evaluated how the  outcome measure correlates with the position of each individual in the ordering. 
+We quantify the correlation using Kendall's tau-b.
+%. Values range between -1 and 1, with -1 signifying perfect inversion, 1 signifying perfect agreement, and 0 signifying the absence of association.
+
+On real datasets, unlike the simulated data, the desired outcome measure, the number of new transmissions per person, is not known. 
+Instead, we have to use inferred relationships.
+HIV-TRACE (used in our cluster growth approach) defines
+a pair of \PLWH{s} as ``genetically linked''
+if their sequences are very similar (TN93 distance below 1.5\%).
+We similarly use the TN93 sequence similarity as an outcome measure, but in addition to using a fixed threshold, we also use smoother functions (Fig.~S11).
+%Following the HIV-TRACE approach, we call a pair of \PLWH{s} genetically linked if their sequences are very similar, as judged by the TN93 distance.
+%We then use as our outcome measure the number of new links
+We measure the number of linked individuals using a step function (1 if TN93 distance is below 1.5\% and 0 otherwise) 
+%a more dispersed logarithmic function,
+and an empirical smooth step function determined by fitting a mixture of three Gaussians to the distribution of pairwise TN93 distances (Material and Methods).
+We also explore an analytical smooth step function (parameterized sigmoid).  
+Note that, when the step function is used, our outcome measure (computed for future transmissions) is exactly the same as what the cluster growth method uses for prioritizing (albeit, using past data). 
+Thus, it is reasonable to suspect that the step function may favor cluster growth. 
+As we move to smoother functions of distance to count genetic links, our measure is expected to become less biased in favor of HIV-TRACE. 
+
+\begin{figure}[t]
+\centering
+%\includegraphics[width=0.49\textwidth]{results_tautest_norm-fit.pdf}%
+%\includegraphics[width=0.49\textwidth]{results_tautest_step.pdf}
+%\includegraphics[width=0.49\textwidth]{results_tautest_sigmoid-L100.pdf}%
+%\includegraphics[width=0.49\textwidth]{results_tautest_sigmoid-L5.pdf}
+\includegraphics[width=\textwidth]{Fig5.pdf}
+\caption{Kendall's tau-b test results for ProACT ordering on real data using four  score functions: an empirical smooth step function, a strict step function around 1.5\%, and the sigmoid  score functions with $\lambda=100$ and $\lambda=5$. The full San Diego dataset was split into two sets (\textit{pre} and \textit{post}) at each decile (shown on the horizontal axis). The individuals in \textit{pre} were ordered using ProACT and by cluster growth, and they were given a  ``score'' computed using a  score function (see Materials and Methods). Kendall's tau-b correlation coefficient was computed for each ordering with respect to the optimal possible ordering (i.e., sorting in descending order of the  score). The null distribution was visualized by randomly shuffling the individuals in \textit{pre}, and test \textit{p}-values are shown in Table~2.}
+\label{fig:tautest}\label{fig:tautest-sup}
+\end{figure}
+
+
+
+\begin{table*}[!thb]
+\caption{Kendall's tau-b test for a null hypothesis that a given prioritization yields a total outcome measure no better than random. We show \textit{p}-values for the real San Diego dataset for the first through ninth deciles using two outcome measure functions. 
+%These \textit{p}-values do not correct for multiple hypothesis testing. 
+Tests that failed to reject the null hypothesis with (uncorrected) \textit{p}-value $< 0.00138$ (corresponding to $\alpha=0.05$ with a Bonferroni multiple hypothesis testing correct with $n=36$) are marked with \dag.\label{tab:tautest}}
+\footnotesize
+\hspace{-1.5cm}
+{\tabcolsep=0pt\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llllllllll@{}}\toprule
+\multicolumn{10}{c}{Empirical Smooth Step Function (FastTree)}\\
+& \multicolumn{1}{c}{10\%} & \multicolumn{1}{c}{20\%} & \multicolumn{1}{c}{30\%} & \multicolumn{1}{c}{40\%} & \multicolumn{1}{c}{50\%} & \multicolumn{1}{c}{60\%} & \multicolumn{1}{c}{70\%} & \multicolumn{1}{c}{80\%} & \multicolumn{1}{c}{90\%}\\
+\midrule
+GD+CG & $^\dag2\times10^{-3}$ & $^\dag2\times10^{-2}$ & $^{\ }5\times10^{-6}$ & $^{\ }2\times10^{-4}$ & $^{\ }5\times10^{-5}$ & $^{\ }6\times10^{-7}$ & $^{\ }2\times10^{-9}$ & $^{\ }2\times10^{-8}$ & $^{\ }2\times10^{-11}$\\
+ProACT & $^{\ }5\times10^{-8}$ & $^{\ }1\times10^{-4}$ & $^{\ }6\times10^{-6}$ & $^{\ }2\times10^{-7}$ & $^{\ }2\times10^{-8}$ & $^{\ }2\times10^{-11}$ & $^{\ }1\times10^{-11}$ & $^{\ }1\times10^{-11}$ & $^{\ }1\times10^{-17}$\\
+\midrule\\~\\[-1em]
+\multicolumn{10}{c}{Step Function Around 1.5\%}\\
+& \multicolumn{1}{c}{10\%} & \multicolumn{1}{c}{20\%} & \multicolumn{1}{c}{30\%} & \multicolumn{1}{c}{40\%} & \multicolumn{1}{c}{50\%} & \multicolumn{1}{c}{60\%} & \multicolumn{1}{c}{70\%} & \multicolumn{1}{c}{80\%} & \multicolumn{1}{c}{90\%}\\
+\midrule
+GD+CG & $^{\ }4\times10^{-12}$ & $^{\ }1\times10^{-19}$ & $^{\ }3\times10^{-28}$ & $^{\ }7\times10^{-25}$ & $^{\ }2\times10^{-19}$ & $^{\ }8\times10^{-12}$ & $^{\ }1\times10^{-17}$ & $^{\ }5\times10^{-14}$ & $^{\ }2\times10^{-25}$\\
+ProACT & $^{\ }1\times10^{-5}$ & $^{\ }5\times10^{-8}$ & $^{\ }3\times10^{-7}$ & $^{\ }2\times10^{-10}$ & $^{\ }1\times10^{-6}$ & $^{\ }1\times10^{-6}$ & $^{\ }1\times10^{-4}$ & $^\dag7\times10^{-3}$ & $^{\ }4\times10^{-7}$\\
+\bottomrule
+\end{tabular*}
+}{}
+\end{table*}
+
+Using both ProACT and cluster growth to prioritize individuals results in orderings of individuals with positive Kendall's tau-b correlations to the number of future genetic links  regardless of the time (i.e., decile) and the function used to count genetic links (Fig.~5).  
+These correlations are statistically significant in almost all cases  (Table~2). 
+The  correlation coefficient  ranges between 0.4 (ProACT; 10\% time)  and 0.1 (cluster growth; 20\% time) for empirical function, and 
+between 0.6 (cluster growth; 10\% time) and 0.1 (ProACT; 80\% time) for the step function.
+
+The comparison between ProACT and cluster growth depends on the choice of the function to count links. 
+When counting the number of links using the step function,
+prioritization by cluster growth consistently outperforms ProACT for all deciles of the dataset.
+These results should be interpreted with the caveat  that we count HIV-TRACE links both to prioritize and to evaluate accuracy. 
+%, which is expected, as the Step Function is how HIV-TRACE defines genetic linkage when defining transmission clusters.
+However, 
+according to the empirical smooth step function learned from the TN93 distances, ProACT outperforms cluster growth in all except one time point, where they are tied.
+
+To further test the impact of the link-counting function applied to TN93 distances on  the relative accuracy of methods, we used a sigmoid function to replace the step function while keeping the inflection point at 1.5\% (Fig.~S11). 
+We observed that as the outcome measure function becomes more smooth,
+ProACT's performance improves with respect to prioritization by cluster growth (Fig.~5,  Table~S1).
+Based on the more smooth sigmoid function ($\lambda=5$), ProACT outperforms cluster growth in all but one case where they are tied.  
+Thus, simply counting distances close to 1.5\% as partial links leads to evaluations that favor ProACT.
+
+
+
+As time increases, both methods experience seemingly downward trends in their tau coefficients, but the null distribution of tau coefficients also tightens  (Fig.~5). Thus,  both methods consistently do significantly better than expected by random chance and there is no clear relationship between \textit{p}-values of individual tool and time (Table~2).
+However, both for the step function and the sigmoid functions, ProACT's relative performance with respect to cluster growth tends to improved over time.
+
+\section{Discussion}
+
+
+We start by discussing observed results and then comment on practical implications of this paper both for public health and for future research. 
+
+
+\subsection{Discussion of Results}
+
+In our simulations, ProACT was the least effective in conditions with very low rate of ART termination, which correspond to very high adherence, or high rates of ART initiation.
+As expected, the total number of new infections originated from \PLWH{s} is low when adherence is high,  reducing the opportunity for improving the ordering.
+Thus, ProACT is the most beneficial in settings where termination of ART or late diagnosis lead to diagnosed individuals who transmit frequently. 
+%This observation is consistent with the motivation we presented for the ProACT algorithm. 
+%Recall that the motivation relied on identifying \PLWH{s} who have stopped being suppressed. 
+%If most \PLWH{s} have been started on treatment and none ever stops treatment, prioritization loses its practical relevance, and relatedly, ProACT loses its statistical power.  
+%We saw a similar effects when we increased the rate of ART $(\lambda_{+})$, which is  also not surprising as increasing $\lambda_{+}$ is in effect similar to reducing $\lambda_{-}$. 
+
+ProACT was quite robust to impacts of subsampling individuals and only at $\sfrac{1}{4}$ sampling did we start to lose accuracy.
+We remind the reader that a $\sfrac{1}{4}$ sampling does not mean that $\sfrac{1}{4}$ of all infected individuals are in the dataset. 
+Rather, it means that $\sfrac{1}{4}$ of diagnosed individuals  are available to us. Recall that, in our model, diagnosed individuals are immediately  sequenced and put on ART (which they may or may not sustain). 
+At any point in time, a large partition of individuals who are infected are not diagnosed and thus not sampled. 
+In other words, the full sampling case should not be misunderstood as including undiagnosed people.
+ Rather, lack of full sampling corresponds to a case where some \PLWH{s} are known to {\em some} clinic but are not included in the study, perhaps due to a lack of sequencing or data sharing. 
+
+% These results have to be interpreted in the context of our adjusted metric, which measures benefits over random and below optimal ordering. 
+% The per capita number of new infections from high-priority \PLWH{s} was  \textit{lowered} when we subsampled the datasets (Fig.~S4).
+% Thus, as expected, when some \PLWH{s} are missing from the dataset available to a particular analysis, the overall effectiveness of identifying top priority \PLWH{s} reduces. 
+% However, the effectiveness reduces equally for the optimal ordering and the ProACT method is not impacted any worse than optimal ordering is. 
+% In fact, ProACT is in some cases impacted a bit less harshly than optimal ordering, hence the improvements in adjusted outcome with $\sfrac{1}{4}$ sampling. 
+% One should also keep in mind that choosing $x$\% highest priority individuals from the full datasets results in 4x as many individuals as choosing the top $x$\% of the $\sfrac{1}{4}$ subsampled dataset.
+
+
+
+% On the San Diego PIRC data, we observed reduced {\em p}-values as time progressed and the dataset became larger. Thus, the last decile (i.e., utilizing the first 90\% of the data to predict riskiness in the next 10\%) resulted in tight null distributions around 0, further highlight significance of . 
+% %is most representative of prioritization efforts in reality: 
+% In practical use, public health officials will want to provide a prioritization method all information they have collected thus far, and they will want to predict riskiness in the very near future.
+% Thus, it can be argued that  90\%-training-10\%-testing  is the most relevant case to practice. 
+% The results also suggest that the ProACT method works the best when several hundreds of \PLWH{s} are included in the analyses. 
+
+ProACT far outperformed random ordering. However, we note that, despite the strong performance, there is much room left for future improvement: the {\em adjusted} outcome measure is consistently below 8\%  when selecting up to 10\% of top-priority \PLWH{s}.
+Thus, there is much room for improvement in identifying high-value individuals.
+It will be unrealistic to expect that any statistical method based solely on sequence data (and perhaps also commonly available metadata, such as sampling times) will be able to come close to the optimal ordering. 
+Nevertheless, methods better than ProACT could likely be developed in the future. 
+Moreover, here, we used ML methods to infer trees and used mutation rate branch lengths. 
+We made these choices mostly for computational expediency. 
+However, ProACT algorithm can be applied on the potentially more accurate Bayesian estimates of the phylogeny. 
+Also, one can attempt to use ProACT after dating the tree. 
+Whether either adjustment results in substantial improvements should be studied in the future. 
+
+\subsection{Implications of Results}
+
+We formalized a useful approach for thinking about the effectiveness of public health intervention in molecular epidemics. 
+Instead of focusing on the accuracy of methods of reconstructing phylogenetic trees or transmission networks, a question fraught with difficulties, we asked a more practical question. 
+Given molecular epidemic data, can the methods, whether phylogenetic or clustering-based, prioritize \PLWH{s} for increased attention by public health?
+Using molecular epidemics for prioritization is, of course, not a new idea. For example, \citet{Wertheim2018} presented a method to prioritize \PLWH{s} based on the growth rates of their transmission clusters.
+\citet{Vasylyeva2018} performed a phylogeographic analysis to reconstruct HIV movement among different locations in Ukraine in order to infer region-level risk prioritization.
+Much earlier even, \citet{Mellors1996} predicted HIV patient prognosis by quantifying HIV RNA in plasma; predicted prognosis can subsequently be used as a prioritization rank.
+However, we hope that our formal definition of the problem as a computational question (i.e., prioritization), in addition to our extensive simulations and developed metrics of evaluation, will stir further work in this area. 
+As stated before, it seems likely that more advanced methods than our simple prioritization approach can improve performance beyond ProACT in the future. 
+
+
+
+ProACT prioritizes individuals, not clusters.
+Prioritizing treatment followup or partner tracing for individuals based on their perceived risk of future transmission promises to be perhaps more effective than targeting clusters.
+However, such targeted approaches also pose ethical questions that 
+have to be considered. 
+For example, we may not want the algorithm to be biased towards particular demographic attributes. 
+ProACT does not use {\em any} metadata in its prioritization, reducing risks of such biases. 
+It simply uses the viral phylogeny.
+%, which, compared to other types of data, may lead to fewer biases. 
+Nevertheless, it is possible that factors such as the depth of the sampling of a demographic group can in fact change branch length patterns in the phylogeny and make ProACT less or more effective for certain demographic groups. 
+These broader implications of individual prioritization and impacts of demographics on the performance of ProACT should be studied more carefully in future. 
+
+The main practical question  is what can be done with a prioritized list of known \PLWH{s}.
+We mentioned that using followups, public health officials can try to ensure sustenance of ART for prioritized individuals, and using partner tracing, they can target PrEP and HIV testing to contacts of  prioritized individuals. Followups, PrEP, and targeted testing are all expensive and can benefit from prioritization. 
+Interestingly, 
+our results indicated that ProACT ordering is a function of features of the sexual contact. 
+For example, we showed that ProACT orders correlate with the degree of nodes in the sexual network.
+These results are significant given the fact that ProACT is given no direct data the sexual network. 
+The fact that ProACT captures (contact) network features means that even if a prioritized \PLWH is already on ART (and thus unlikely to transmit), his/her sexual contacts can be good targets for interventive care. 
+
+
+One may wonder whether ordering by branch lengths will result in orderings that fail to change with time to reflect changes in the epidemic.
+To answer this question,
+on the San Diego PIRC data, we asked how fast the  ProACT ordering changes as time progresses. To do so, we computed Kendall's tau-b correlations to the ProACT ordering obtained using only the first decile of the dataset (Fig.~S12). There was a strong but diminishing correlation with the initial ordering. The correlations started at 1 (by definition) and gradually decreased in the ninth decile to 0.522. 
+The results show that as desired,  ProACT orders do in fact change with time, albeit gradually.
+The gradual change implies that certain individuals remain high-priority as time progresses. 
+In practical use, ProACT ordering should be combined with clinical knowledge about the status of individual patients. For example, high priority individuals according to ProACT can be given lower priority if they manage to constantly remain suppressed with multiple followups.
+More broadly, the ProACT ordering should be considered one more tool for prioritizing clinical care, but other data, not incorporated into the algorithm, should also be considered. 
+
+Finally, a question faced by public health officials is whether the cost of targeting diagnosed individuals for followups and partner tracing is worth the potential reduction in future cases. 
+The answer to that question will inevitably depend on who is targeted.
+For example, in our default simulation case, targeting individuals randomly can directly prevent 0.05 transmissions per chosen person  in the next 12 months, whereas targeting top 1000 individuals according to ProACT would directly target 0.12 transmissions. 
+Thus, prioritization can in fact change the cost-benefit analyses. 
+Moreover, given a prioritization, one can use simulations to predict the outcome measure for the top individuals (similar to Fig.~S5) and use metrics such as quality-adjusted life-year (QALY) to estimate how many top individuals should be targeted for the cost to justify the benefits.
+
+\section{Materials and Methods}
+\subsection{Simulations}
+We use FAVITES to simulate a sexual contact network, transmission network, viral phylogeny, and viral sequences emulating HIV transmission in San Diego from 2005 to 2014. 
+For each simulated sequence dataset (20 replicates),
+using FastTree~2 \citep{Price2010},
+a phylogenetic tree was inferred under the GTR+$\Gamma$  model from the sequences obtained in the first 9 years of the simulation.
+These trees were then MinVar-rooted using FastRoot \citep{Mai2017},
+and ProACT was run on the resulting trees.
+%\citep{Moshiri2018}.
+
+Transmissions are modeled using a compartmental epidemiological model with 5 states: Susceptible (S), Acute HIV Untreated (AU), Acute HIV Treated (AT), Chronic HIV Untreated (CU), and Chronic HIV Treated (CT). Individuals in state S (i.e., uninfected) can only transition to state AU. Each infected state $x\in\{\text{AU},\text{AT},\text{CU},\text{CT}\}$ defines a ``rate of infectiousness'' $\lambda_{\text{S},x}$: given an uninfected individual $u$ in state S who has $n_x$ sexual partners in state $x\in\{\text{AU},\text{AT},\text{CU},\text{CT}\}$, the transition of $u$ from S to AU is a Poisson process with rate $\lambda_u=\sum_{x\in\{\text{AU},\text{AT},\text{CU},\text{CT}\}}{n_{x}\lambda_{\text{S},x}}$. To mimic reality, where ART significantly reduces the risk of transmission, rates are chosen such that $\lambda_{\text{S},\text{AU}} > \lambda_{\text{S},\text{CU}} > \lambda_{\text{S},\text{AT}} > \lambda_{\text{S},\text{CT}} \approx 0$. At the beginning of the epidemic simulation, all initially uninfected individuals are placed in state S, and all initially infected (i.e., ``seed'') individuals are distributed among the 4 infected states according to their steady-state proportions.
+This model is a simplified version of the model  by \citet{Granich2009}.
+
+Once the transmissions and sample times are obtained, the viral phylogeny evolves inside the transmission tree under a coalescent model of evolution with logistic within-host viral population growth and a bottleneck event at the time of transmission (i.e., initial viral population size is 1) \citep{Ratmann2017}.
+This process produces a separate viral phylogeny for each seed individual, so we also need a tree for seed individuals. Each \textit{seed} individual of the epidemic is the root of an independent viral phylogeny, and these trees were merged by simulating a seed tree with one leaf per seed node under a non-homogeneous Yule model \citep{LeGat2016} with rate function $\lambda(t)=e^{-t^2}+1$ scaled to have a height of 25 years to match the estimate of the time of the most recent common ancestor of HIV in San Diego \citep[see][for details]{Moshiri2018}. 
+
+Once the true tree was available, a mutation rate was sampled for each branch independently from a truncated normal random variable from 0 to infinity with a location parameter of 0.0008 and a scale parameter of 0.0005 to scale branch lengths from years to expected number of per-site mutations \citep{Moshiri2018}.
+Sequences were evolved according to the GTR model~\cite{gtr} and down the trees with branch length in the mutation units.
+
+For the most part, we use the base parameters used in \citet{Moshiri2018} that sought to model the San Diego HIV epidemic from 2005 to 2014, with the following modifications to better capture reality. See Table~S2 for the full set of parameters of the default condition.
+
+\subsubsection{Sexual contact network---}
+%In \citet{Moshiri2018}, sexual contact networks were simulated under the Barab\`asi--Albert (BA) model \citep{Barabasi1999} such that the expected degree (i.e., average number of sexual contacts for a single individual) was 4.
+To capture the scale-free nature of the sexual contact network, \citet{Moshiri2018} used the Barab\`asi--Albert (BA) model \citep{Barabasi1999}.
+In addition to the scale-free property, in HIV sexual networks, we typically observe many densely-connected communities \cite{Rothenberg1998}, a property the BA model fails to directly model.
+To have control over the number of communities,  we simulated sexual contact networks such that networks contained 20 BA communities,
+each with 5,000 individuals.
+In the base condition, the expected degree of connection between an individual and somebody \textit{within} their community was chosen to be 10,
+and the expected degree between an individual and somebody \textit{outside} their community was chosen to be 1. 
+Each community was simulated separately using the BA model and connections between communities were chosen uniformly at random, akin to the Erd\H os--R\'enyi model \citep{Erdos1959}. 
+Estimates from the literature put the number of contacts at 3--4 during a single year \citep{Rosenberg2011}. 
+Because our simulated sexual contacts remain static over the 10 year simulation period, we explore mean degrees between 10 and 30.
+
+\subsubsection{Epidemic initialization---}
+%The transmission model consists of four infected states (in descending order of infectiousness):
+%Acute HIV without ART (AU), Chronic HIV without ART (CU), Acute HIV with ART (AT), and Chronic HIV with ART (CT).
+In \citet{Moshiri2018},
+at the start of the epidemic,
+all infected individuals were in state AU.
+Here, instead,
+we randomly distribute initially infected individuals according to expected proportions of the states. To find these proportions, we ran simulations in which all seed individuals were in state AU, and we observed the proportion of individuals in each state over time, which reached a steady-state fairly early in the simulations (Fig.~S13).
+
+\subsubsection{Time of sequencing---} In \citet{Moshiri2018},
+viral sequences are obtained from individuals exactly at the end time of the 10-year simulation period.
+In reality, however,
+HIV patients are typically sequenced when they first visit a clinic to receive ART.
+Thus, it is expected that the terminal branch lengths of trees simulated in \citet{Moshiri2018} are artificially longer than would be expected.
+Instead,
+we sample viral sequences from individuals the first time they begin ART (i.e., the first time they enter state AT or CT).
+Our current simulation better captures standards of care in advanced health care systems. 
+
+% \subsubsection{Simulated data analysis---}
+% For each simulated sequence dataset,
+% using FastTree~2 \citep{Price2010},
+% a phylogenetic tree was inferred under the GTR+$\Gamma$  model from the sequences obtained in the first 9 years of the simulation.
+% These trees were then MinVar-rooted using FastRoot \citep{Mai2017},
+% and ProACT was run on the resulting trees.
+
+\subsection{PIRC San Diego Dataset}
+To test ProACT on real data, we used a Multiple Sequence Alignment (MSA) of 926 HIV-1 subtype B \textit{pol} sequences from San Diego collected by the UC San Diego Primary Infection Resource Consortium (PIRC). 
+PIRC  is one of the largest longitudinal cohorts of \PLWH{s} in the United States. By design, PIRC strives to include acute infections (as much as 40\% of recruited individuals are during acute or early stages of infection).  
+Access to the data was obtained through a proposal submitted to PIRC.
+
+A phylogenetic tree was inferred from the MSA under the GTR+$\Gamma$ model using FastTree~2 \citep{Price2010}, and the resulting tree was MinVar-rooted using FastRoot \citep{Mai2017}. For each decile, using TreeSwift \citep{Moshiri2018b}, the full tree was pruned to only contain samples obtained up to the end of that decile. ProACT was run on each of the resulting trees.
+
+\subsection{Evaluation Procedure}
+
+\subsubsection{Simulated data---}
+To measure the efficacy of a given ProACT selection,
+because the true transmission histories are known in simulation,
+we simply average the number of infections caused by the individuals in the selection in the last year of simulation (i.e, after prioritization)
+to obtain a raw outcome measure.
+
+Let $A=\{1,\ldots,n\}$ denote the first, \ldots, $n$-th sampled individual in the current time step (years 1--9 in our simulations). For each individual $i$, let $c(i)$ denote the number of individuals directly infected by $i$ in the next time step (year 10 in our simulations). 
+Given any set of individuals $s\subseteq A$, let $C(s)=\frac{1}{|s|}\sum_{i\in s}{c(i)}$ denote the average $c(i)$ for all individuals $i\in s$.
+
+Let $x=(x_1,\ldots,x_n)$ denote an ordering of $A$. The (unadjusted) Cumulative Moving Average (CMA) of $x$ up to $i$ is $C\left(\{x_1,\ldots,x_i\}\right)$.
+Let $o=(o_1,\ldots,o_n)$ denote the ordering of $A$ in which elements are sorted in descending order of $c(i)$ (i.e., the optimal ordering), with ties broken arbitrarily. 
+We defined the adjusted CMA of $x$ up to $i$ as
+\begin{equation*}%\label{eq:cma}
+    \frac{C\left(\{x_1,\ldots,x_i\}\right)-C(A)}{C\left(\{o_1,\ldots,o_i\}\right)-C(A)}\; .
+\end{equation*}
+We use this equation to measure the effectiveness of a selection of the top $i$ individuals from each ordering of all individuals.
+We explore $i$ for 1 to 10\% of the total number of samples (i.e., $\frac{|A|}{10}$). 
+
+\subsubsection{Real data---}
+The sequences were sorted in ascending order of sample time and,
+for each decile,
+they were split at the decile to form two sets: \textit{pre} and \textit{post}. A phylogenetic tree was inferred from the sequences in \textit{pre} under the GTR+$\Gamma$ model using FastTree~2 \citep{Price2010} and MinVar-rooted \citep{Mai2017}.
+Using the resulting tree, ProACT ordered the samples. 
+Then, pairwise distances were computed between each sequence in \textit{pre} and each sequence in \textit{post} under the Tamura-Nei 93 (TN93) model \citep{Tamura1993} using the \texttt{tn93} tool of HIV-TRACE \citep{Pond2018}.
+
+A natural function to compute the risk of a given individual $u$ in \textit{pre},
+similar to that proposed by \citet{Wertheim2018},
+is to simply count the number of individuals in \textit{post} who are genetic links to $u$, i.e., $\sum_{v\in post}{I\left(d(u,v)\le1.5\%\right)}$.
+In other words,
+the score function is simply a step function with value 1 for all distances less than or equal to 1.5\% and 0 for all other distances.
+However,
+the selection of 1.5\% as the distance threshold,
+despite being common practice in many HIV transmission clustering analyses,
+is somewhat arbitrary,
+and a step function exactly at this threshold may be overly strict
+(e.g. should a pairwise distance of 1.51\% be ignored?).
+
+To generalize this notion of scoring links,
+we utilized three analytical score functions.
+The first is the aforementioned step function $f_1(d)=I\left(d\le1.5\%\right)$.
+The second is a sigmoid function $f_2(d)=\frac{\lambda+1}{\lambda^{d/0.15}+\lambda}$ with the choice of $\lambda=100$  and $\lambda=5$ (Fig.~S11).
+%a logarithmic function $f_4(d)=\frac{\ln(d+0.25)}{\ln(0.25)}$,
+The third is an empirical scoring function learnt from the data by fitting a mixture model of three Gaussian random variables onto the distribution of pairwise TN93 distances $f_3(d)=\frac{p_1(x)}{p_1(x)+p_2(x)+p_3(x)}$, where $p_1(x)$ is the Probability Density Function (PDF) of the Gaussian component with smallest mean and $p_2(x)$ and $p_3(x)$ are the remaining Gaussian components
+(Fig.~S11).
+Specifically, the three Gaussian fits were parameterized by ($\mu_1$=0.0191, $\sigma_1$=0.0103), ($\mu_2$=0.0609, $\sigma_2$=0.0118), and ($\mu_3$=0.118, $\sigma_3$=0.0468), respectively.
+
+For each of these function,
+for each decile to define \textit{pre} and \textit{post},
+we performed a Kendall's tau-b test to compare the prioritization approaches \citep{Kendall1938}.
+To generate a null distribution in Figure~5, we randomly shuffled the individuals in \textit{pre} repeatedly; note however that the \textit{p}-values reported in Table~2 are the theoretical \textit{p}-values computed by the tau-b test, not empirically estimated from our repeated shuffling.
+
+%Recall that $t(l)$ denotes the sample time of sequence $l$. 
+%For each sequence $l$ in \textit{pre}, let $N(l)$ denote the set of sequences in \textit{post} with a TN93 distance of at most 1.5\% from $l$.
+%To estimate the rate of arrival of new links, we use $R(l)=\big(\sfrac{1}{\lvert N(l)\rvert}{\sum_{v\in N(l)}{t(v)-t(l)}}\big)^{-1}$ or $R(l)=0$ when no new link is established.
+%Note that the inverse of mean arrival times is the maximum likelihood estimate of the rate if we assume the new links are added in a memoryless process (i.e, waiting times are exponentially distributed) and values are uncensored. 
+%Thus, $R(l)=0$ implies no links in \textit{post}, low $R(l)$ implies a long time delay between $l$ and its \textit{post} links, and high $R(l)$ implies a short time delay between $l$ and its \textit{post} links.
+
+%Given an ordering $x=\left(x_1,\ldots,x_n\right)$, let $R(x)=\left(R(x_1),\ldots,R(x_n)\right)$. 
+%Ideally, $R(x)$ should be in the descending order and if the order is random $R(x)$ values will be randomly ordered.
+%To test if an order is better than random, let $A(x)=\sum_{i=1}^{n} \sfrac{1}{i}\sum_{j=1}^{i}{R(x_j)}$ denote the area under the curve of the cumulative moving average (CMA) of $R(x)$.
+%$A(x)=\sum C(x)$. 
+%Larger values of $A(x)$ imply that individuals with high $R(x_i)$ are early in the ordering. The minimum and maximum possible of $A(x)$ among all orderings, $A_{\min}(x)$ and $A_{\max}(x)$, respectively, can be computed by sorting $R(x)$ in ascending and descending order, respectively, and computing the area under the CMA curve of each. From these, a test statistic between 0 and 1 can be obtained: 
+%{$S(x)=\sfrac{\left(A(x)-A_{\min}(x)\right)}{\left(A_{\max}(x)-A_{\min}(x)\right)}$}. 
+%To compute a $p$-value, the background distribution of $S$ is sampled via a permutation test by shuffling $x$ 1,000 times and computing $S$ from each shuffling.
+
+
+\section{Acknowledgements}
+We thank Susan B. Little for providing the San Diego HIV sequence dataset used in this study.
+We also thank Joel O. Wertheim and Sanjay R. Mehta for fruitful discussions that helped motivate the development of ProACT.
+
+This work was supported by the National Institutes of Health (5P30AI027767-28, AI100665, AI106039, and MH100974) and a developmental grant from the University of California, San Diego Center for AIDS Research (P30 AI036214), supported by the National Institutes of Health.
+
+%If your paper has accompanying supplementary data, please include the below statement in your PDF.
+\section{Supplementary Material}
+Data available from the Dryad Digital Repository:
+% \href{http://dx.doi.org/10.5061/dryad.[NNNN]}%
+% {http://dx.doi.org/10.5061/dryad.[NNNN]}.
+\url{http://dx.doi.org/10.5061/dryad.[NNNN]}.
+
+\bigskip\bigskip
+
+%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
+
+% The best way to enter references is to use BibTeX.
+\bibliographystyle{sysbio}
+\bibliography{proact,smreferences}
+
+% 1. All authors should be listed i.e. no use of et al.
+% 2. Dashes should not be used to replace author names in repeat entries
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Please include any figure captions on a separate page after the references. Figures themselves should be embedded in the text.
+
+%\begin{figure}[!p]
+%\centering\includegraphics{fig1}
+%\caption{Figure caption}
+%\label{Fig1}
+%\end{figure}
+
+
+%\begin{table}[!p]
+% 1. Table titles should be in caps and lowercase
+% 2. Footnotes can be used in Tables (a,b,c)}
+%\tblcaption{Table title
+%\label{Table1}}
+%{\tabcolsep=4.25pt
+%\begin{tabular}{@{}cccccccccc@{}}
+%\tblhead{Heading & Heading & Heading & Heading & Heading}
+%Value & Value & Value & Value & Value 
+%\lastline
+%\end{tabular}}
+%\end{table}
+
+%If you have any print appendices, please include them at the end of the document.
+
+\end{document}

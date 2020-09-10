@@ -164,12 +164,12 @@ Though not obvious, this observation can be explained by the constraints placed 
 
 \begin{figure}[!tp]
 \centering
-%\includegraphics[width=0.995\textwidth]{diagram.pdf}\\
-%\includegraphics[width=0.425\textwidth]{avg_edgelength_vs_time_ftmv.pdf}%
-%\includegraphics[width=0.57\textwidth]{edgelength_vs_efficacy.pdf}\\\vspace{-5pt}
+%\includegraphics[width=0.995\textwidth]{figs/diagram.pdf}\\
+%\includegraphics[width=0.425\textwidth]{figs/avg_edgelength_vs_time_ftmv.pdf}%
+%\includegraphics[width=0.57\textwidth]{figs/edgelength_vs_efficacy.pdf}\\\vspace{-5pt}
 %~\hfill (d)\hfill~~~~~\hfill
 %(e)\hfill~\\~\\
-\includegraphics[width=\textwidth]{Fig1.pdf}
+\includegraphics[width=\textwidth]{figs/Fig1.pdf}
 \caption{The effect of new transmissions on incident branch lengths. (a) Individual $A$ transmits to individual $B$ and $C$ at times at  $t_1$ and $t_2$, respectively. (b) Viral samples are obtained from individuals $A$, $B$, and $C$ at times $t_A$, $t_B$, and $t_C$. The viral phylogeny of samples is constrained by each transmission event's bottleneck, and the most likely phylogeny matches the transmission history (Left), but in the less likely deeper coalescence, it may not match (Right). (c) Moving from the phylogeny observed at time $t_B$ to the phylogeny at time $t_C$, the branch length incident to individual A  shortens upon the addition of individual C  in the likely event that the coalescence of the lineage from $C$ with the lineage from $A$ is more recent than its coalescence with the lineage from $B$ (Left), or the branch length incident to individual A remains constant in the event of a less likely deeper coalescence (Right). Regardless, the length of the branch incident to individual A never increases.
 In simulation, we can observe this trend: as time progresses, the incident branch length of each individual tends to decrease, both in true (Fig.~S1) and inferred (d) phylogenies, and as the number of transmissions from a given individual increases, the distribution of incident edge length tends to decrease, both in true and inferred phylogenies, labeled ``True'' and ``Est.,'' respectively (e).}
 \label{fig:diagram}
@@ -409,21 +409,21 @@ Kendall's Tau-b is a rank correlation coefficient adjusted for ties \cite{Kendal
 
 % \begin{figure}[!tp]
 % \centering
-% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-2.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-4.pdf}\\\vspace{-10pt}
+% \includegraphics[width=0.365\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-2.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-4.pdf}\\\vspace{-10pt}
 % {\small (a)}\\
-% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-2x}.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-4x}.pdf}\\\vspace{-10pt}
+% \includegraphics[width=0.365\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-2x}.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-4x}.pdf}\\\vspace{-10pt}
 % {\small (b)}\\
-% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.5x}.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.25x}.pdf}\\\vspace{-10pt}
+% \includegraphics[width=0.365\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.5x}.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_STOPRATE-0.25x}.pdf}\\\vspace{-10pt}
 % {\small (c)}\\
-% \includegraphics[width=0.365\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-10.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-20.pdf}%
-% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-30.pdf}\\\vspace{-10pt}
+% \includegraphics[width=0.365\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-10.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-20.pdf}%
+% \includegraphics[trim=55 00 00 00,clip,width=0.317\textwidth]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_EXPDEGREE-30.pdf}\\\vspace{-10pt}
 % {\small (d)}\\
 % \caption{ProACT performance on datasets simulated using FAVITES.
 % Cumulative Moving Average (CMA) of adjusted number of transmissions per person across the first decile of prioritized \PLWH for each simulation parameter set.
@@ -445,13 +445,13 @@ Kendall's Tau-b is a rank correlation coefficient adjusted for ties \cite{Kendal
 \centering
 %{\footnotesize
 %~\hfill(a)\hfill (b)\hfill~\\
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_individual_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_normalized_individual_SAMPLE-FIRSTART_ARTRATE-1.pdf}
 %\\
 %~\hfill(c)\hfill (d)\hfill~\\
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_individual_n1000.pdf}
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_individual.pdf}
-\includegraphics[width=\textwidth]{Fig2.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_individual_n1000.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{figs/results_efficacy_tau_individual.pdf}
+\includegraphics[width=\textwidth]{figs/Fig2.pdf}
 %}
 \caption{Effectiveness of prioritization on simulated datasets. 
 The simulations were 10 years in length,
@@ -523,8 +523,8 @@ while almost all replicates of $\lambda_-=4$x have $p<10^{-20}$, for the 0.25x c
 
 % \begin{figure}[!tp]
 % \centering
-% \includegraphics[width=0.493\textwidth]{results_efficacy_individual_n100.pdf}
-% \includegraphics[width=0.493\textwidth]{results_efficacy_individual_n1000.pdf}\\
+% \includegraphics[width=0.493\textwidth]{figs/results_efficacy_individual_n100.pdf}
+% \includegraphics[width=0.493\textwidth]{figs/results_efficacy_individual_n1000.pdf}\\
 % \caption{Efficacy on datasets simulated using FAVITES. Average of the raw number of transmissions per person for the top $n$ individuals in a prioritized list vs. simulation parameter set across various values of $n$. The violin plots depicted are across 20 replicates and contain box plots with distribution medians shown as white dots and distribution means shown as dashed grey lines.}\label{fig:efficacy-vs-n}
 % \end{figure}
 
@@ -581,13 +581,13 @@ Prioritizing \PLWH{s} whose contacts are likely to transmit can give public heal
 % \centering
 % {\footnotesize
 % ~\hfill(a)\hfill (b)\hfill~\\
-% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
-% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
 % \\
-% %\includegraphics[width=0.493\textwidth]{results_efficacy_neighbors_n100.pdf}
+% %\includegraphics[width=0.493\textwidth]{figs/results_efficacy_neighbors_n100.pdf}
 % ~\hfill(c)\hfill (d)\hfill~\\
-% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_n1000.pdf}
-% \includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_neighbors.pdf}}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_neighbors_n1000.pdf}
+% \includegraphics[width=0.493\textwidth,trim={0 0 0 22pt},clip]{figs/results_efficacy_tau_neighbors.pdf}}
 % \caption{Neighbor transmissions non-tau
 % }\label{fig:efficacy-neighborss}
 % \end{figure}
@@ -599,15 +599,15 @@ Prioritizing \PLWH{s} whose contacts are likely to transmit can give public heal
 \centering
 %{\footnotesize
 %~\hfill(a)\hfill (b)\hfill~\\
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
-%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_neighbors_SAMPLE-FIRSTART_STOPRATE-1x.pdf}
+%\includegraphics[width=0.493\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_normalized_neighbors_SAMPLE-FIRSTART_ARTRATE-1.pdf}
 %\\
 %~\hfill(c)\hfill (d)\hfill~\\
-%\includegraphics[width=0.47\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_neighbors_n1000.pdf}
-%\includegraphics[width=0.5\textwidth,trim={0 0 0 22pt},clip]{results_efficacy_tau_neighbors.pdf}%
+%\includegraphics[width=0.47\textwidth,trim={0 0 0 22pt},clip]{figs/results_efficacy_neighbors_n1000.pdf}
+%\includegraphics[width=0.5\textwidth,trim={0 0 0 22pt},clip]{figs/results_efficacy_tau_neighbors.pdf}%
 %\\
 %}
-\includegraphics[width=\textwidth]{Fig3.pdf}
+\includegraphics[width=\textwidth]{figs/Fig3.pdf}
 \caption{Second order effects. 
 (a) CMA of the number of infections from contacts of the top individuals according to each ordering; other settings similar to Fig.~2a. (b)
 Similar to  part (a) but adjusted for random and optimal ordering.
@@ -626,8 +626,8 @@ Number of transmissions from neighbours for the top 1000 individuals  in a prior
 \begin{figure}[!tp]
 \centering
 {\footnotesize
-%\includegraphics[width=0.5\textwidth,trim={0 0 0 24pt},clip]{results_efficacy_tau_contacts.pdf}%
-\includegraphics[width=0.5\textwidth]{Fig4.pdf}%
+%\includegraphics[width=0.5\textwidth,trim={0 0 0 24pt},clip]{figs/results_efficacy_tau_contacts.pdf}%
+\includegraphics[width=0.5\textwidth]{figs/Fig4.pdf}%
 \\
 }
 \caption{ProACT captures sexual contact network degrees.
@@ -681,11 +681,11 @@ As we move to smoother functions of distance to count genetic links, our measure
 
 \begin{figure}[t]
 \centering
-%\includegraphics[width=0.49\textwidth]{results_tautest_norm-fit.pdf}%
-%\includegraphics[width=0.49\textwidth]{results_tautest_step.pdf}
-%\includegraphics[width=0.49\textwidth]{results_tautest_sigmoid-L100.pdf}%
-%\includegraphics[width=0.49\textwidth]{results_tautest_sigmoid-L5.pdf}
-\includegraphics[width=\textwidth]{Fig5.pdf}
+%\includegraphics[width=0.49\textwidth]{figs/results_tautest_norm-fit.pdf}%
+%\includegraphics[width=0.49\textwidth]{figs/results_tautest_step.pdf}
+%\includegraphics[width=0.49\textwidth]{figs/results_tautest_sigmoid-L100.pdf}%
+%\includegraphics[width=0.49\textwidth]{figs/results_tautest_sigmoid-L5.pdf}
+\includegraphics[width=\textwidth]{figs/Fig5.pdf}
 \caption{Kendall's tau-b test results for ProACT ordering on real data using four  score functions: an empirical smooth step function, a strict step function around 1.5\%, and the sigmoid  score functions with $\lambda=100$ and $\lambda=5$. The full San Diego dataset was split into two sets (\textit{pre} and \textit{post}) at each decile (shown on the horizontal axis). The individuals in \textit{pre} were ordered using ProACT and by cluster growth, and they were given a  ``score'' computed using a  score function (see Methods). Kendall's tau-b correlation coefficient was computed for each ordering with respect to the optimal possible ordering (i.e., sorting in descending order of the  score). The null distribution was visualized by randomly shuffling the individuals in \textit{pre}, and test \textit{p}-values are shown in Table~2.}
 \label{fig:tautest}\label{fig:tautest-sup}
 \end{figure}
@@ -845,42 +845,8 @@ We also thank Joel O. Wertheim and Sanjay R. Mehta for fruitful discussions that
 
 This work was supported by the National Institutes of Health (5P30AI027767-28, AI100665, AI106039, and MH100974) and a developmental grant from the University of California, San Diego Center for AIDS Research (P30 AI036214), supported by the National Institutes of Health.
 
-%If your paper has accompanying supplementary data, please include the below statement in your PDF.
-
 \bigskip\bigskip
 
-%%%%%%%%%%%%%%%%%%%% REFERENCES %%%%%%%%%%%%%%%%%%
-
-% The best way to enter references is to use BibTeX.
 \bibliographystyle{sysbio}
 \bibliography{proact,smreferences}
-
-% 1. All authors should be listed i.e. no use of et al.
-% 2. Dashes should not be used to replace author names in repeat entries
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Please include any figure captions on a separate page after the references. Figures themselves should be embedded in the text.
-
-%\begin{figure}[!p]
-%\centering\includegraphics{fig1}
-%\caption{Figure caption}
-%\label{Fig1}
-%\end{figure}
-
-
-%\begin{table}[!p]
-% 1. Table titles should be in caps and lowercase
-% 2. Footnotes can be used in Tables (a,b,c)}
-%\tblcaption{Table title
-%\label{Table1}}
-%{\tabcolsep=4.25pt
-%\begin{tabular}{@{}cccccccccc@{}}
-%\tblhead{Heading & Heading & Heading & Heading & Heading}
-%Value & Value & Value & Value & Value 
-%\lastline
-%\end{tabular}}
-%\end{table}
-
-%If you have any print appendices, please include them at the end of the document.
-
 \end{document}

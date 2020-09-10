@@ -70,9 +70,10 @@ Siavash Mirarab,$^{3,\ast}$\\[4pt]
 \maketitle
 
 \begin{abstract}
-{In HIV epidemics,  the structure of the transmission network can be dictated by just a few individuals. Public health intervention, such as ensuring people living with HIV adhere to antiretroviral therapy (ART) and are continually virally-suppressed, can help control the spread of the virus. However, such intervention requires utilizing the limited public health resource allocations. As a result, the ability to determine which individuals are most at-risk of transmitting HIV could allow public health officials to focus their limited resources on these individuals. Molecular epidemiology suggests an approach: prioritizing people living with HIV based on patterns of transmission inferred from their sampled viral sequences. In this paper, we introduce ProACT (\textbf{Pr}i\textbf{o}ritization using \textbf{A}n\textbf{C}es\textbf{T}ral edge lengths), a  phylogenetic approach for prioritizing individuals living with HIV.
+{In HIV epidemics,  the structure of the transmission network can be dictated by just a few individuals. Public health intervention, such as ensuring people living with HIV adhere to antiretroviral therapy (ART) and are continually virally-suppressed, can help control the spread of the virus. However, such intervention requires utilizing the limited public health resource allocations. As a result, the ability to determine which individuals are most at-risk of transmitting HIV could allow public health officials to focus their limited resources on these individuals. Molecular epidemiology suggests an approach: prioritizing people living with HIV by patterns of transmission inferred from their sampled viral sequences. In this paper, we introduce ProACT (\textbf{Pr}i\textbf{o}ritization using \textbf{A}n\textbf{C}es\textbf{T}ral edge lengths), a  phylogenetic approach for prioritizing individuals living with HIV.
 ProACT uses a simple idea: ordering individuals by their terminal branch length in the phylogeny of their virus. 
-In simulations and also on a dataset of HIV-1 subtype B \textit{pol} sequences obtained in San Diego, we show that this simple strategy improves the effectiveness of prioritization compared to state-of-the-art methods that rely on monitoring the growth of transmission clusters defined based on genetic distance.}
+In simulations and also on a dataset of HIV-1 subtype B \textit{pol} sequences obtained in San Diego, we show that this simple strategy improves the effectiveness of prioritization compared to state-of-the-art methods that rely on monitoring the growth of transmission clusters defined based on genetic distance.
+ProACT is freely available at \url{https://github.com/niemasd/ProACT} as an open-source software project.}
 {HIV, epidemiology, phylogenetics}
 \end{abstract}
 \newline
@@ -89,7 +90,7 @@ One form of intervention aiming to reduce future transmissions is continued trea
 Antiretroviral therapy (ART) is an effective treatment of HIV that suppresses the HIV virus in the majority of cases, stops the progression of the disease, and prevents onward transmission to an uninfected sexual partner, provided the individual continuously adheres to the treatment \citep{Cohen2011}.
 %In addition to reducing risk of transmission at the molecular level, adherence to ART is associated with %may yield
 %a reduction of risky behavior as well \citep{Bunnell2006}.
-In most advanced health care systems, ART is made available routinely  to newly diagnosed patients, but several opportunities for further intervention remains available. 
+In the health care systems of most high-income countries, ART is made available routinely  to newly diagnosed patients, but several opportunities for further intervention remain available. 
 Most importantly, not every diagnosed person initiates ART and not all cases of ART initiation lead to a sustained suppression of the virus through time. 
 Individuals who start ART but fail to sustain it or who are otherwise unsuppressed can still infect others. 
 Thus, a possible intervention is to use public health resources to help diagnosed individuals to stay on ART and to remain continually suppressed \citep{Poon2016}. 
@@ -101,18 +102,18 @@ The health system can potentially use partner tracing \citep{Gotz2014} to identi
 Finally, if the  priority status of individuals shows any association with specific geographical or demographic groups (beyond known associations), the public health system can design strategies for further outreach, testing, and PrEP administration for the impacted groups.
 
 All three types of intervention   are  costly and cannot be undertaken for every known individual.
-If diagnosed people at risk of not being suppressed could be predicted accurately, the public health system could focus their limited resources on these individuals,
+If diagnosed people at risk of not being suppressed could be predicted accurately, the public health system could focus their limited resources on these individuals.
 Thus, a natural question surfaces: which individuals are most at-risk of transmitting HIV? %the virus?
 However, predicting tendency for future transmissions is difficult and can also be problematic if undertaken primarily based on demographic or behavioral traits.
 
-Molecular epidemics suggest an alternative method:
+Molecular epidemiology suggest an alternative method:
 prioritizing  for intervention solely based on patterns of transmission inferred from HIV sequence data~\citep{Bbosa2019,Villandre2019,Oster2018,Ragonnet-Cronin2019,Wertheim2018,Wertheim2011,Wertheim2014,Smith2009}.
 The inference of transmission networks using phylogenetic or distance-based methods has been the subject of much research \cite[e.g.][]{Leitner2018,Pond2018,Ragonnet-Cronin2013,Prosperi2011}.
 However, in this work, instead of being concerned with inferring exact patterns of transmissions, we ask the following question:
 given molecular data from a set of \textit{sequenced} HIV positive individuals (``\PLWH{s}'' for short), %presumably all with access to ART, 
 who should be prioritized for further intervention? 
 
-Prioritizing care based on molecular epidemics has been studied recently. 
+Prioritizing care based on molecular epidemiology has been studied recently. 
 \citet{Wertheim2018} present a method for prioritizing \PLWH{s} based on performing transmission clustering (i.e., grouping individuals with low viral genetic distance into \textit{transmission clusters}) and ordering clusters  by growth rate.
 On a large dataset from New York, they show that the approach is able to predict individuals who have relatively larger numbers of transmission links in the near future.
 \citet{Moshiri2018} have studied the same question in simulations and have shown that monitoring cluster growth can be used for predicting future transmissions substantially better than a random guess, whether clusters are defined using genetic distances or using phylogenetic methods. 
@@ -131,7 +132,7 @@ We first motivate the approach and then present a formal definition of the metho
 
 ProACT is motivated and tested in a context similar to the present day health care systems that enjoy enough resources to provide ART to all (or at least most) diagnosed individuals.
 Thus, each \PLWH can be assumed to be given ART at a time close to when their HIV is sequenced, but they may fail to be suppressed for the remainder of their life.
-These conditions describe the common practice of care in many advanced and (increasingly) developing countries. 
+These conditions describe the common practice of care in many high-income and (increasingly) low-to-middle income countries. 
 
 
 \subsection{Motivating the Approach}
@@ -160,7 +161,7 @@ In simulation, we can observe this trend: as time progresses, the incident branc
 \end{figure}
 
 
-In the context of HIV epidemiology in many advanced countries,
+In the context of HIV epidemiology in many high-income countries,
 \PLWH{s} are typically sequenced
 upon beginning Antiretroviral Therapy (ART).
 Let's assume for simplicity that every individual in the given dataset has at some point initiated ART,
@@ -244,8 +245,8 @@ Expected Degree $\left(E_d\right)$~~~~~~ & \textbf{10}, 20, 30\\
 In order to test ProACT's efficacy, we performed a series of simulation experiments in which we used FAVITES \citep{Moshiri2018} to generate a sexual contact network, transmission network, viral phylogeny, and viral sequences emulating HIV transmission in San Diego from 2005 to 2014 (Material and Methods).
 We have simulated nine model conditions (Table~1) by starting from a base model condition and varying the rate of ART initiation $(\lambda_+)$, rate of ART termination $(\lambda_-)$, and the expected degree of the sexual network $(E_d)$.
 We subsequently inferred and rooted a phylogeny of all sequences obtained during the first 9 years of the simulation.
-Then, ProACT was run on the true and inferred full trees and subsampled trees.
-
+To measure the impact of imperfect sampling, we subsampled the sequence datasets and subsequently inferred and rooted phylogenies from the resulting subsamples.
+We then ran ProACT on all trees (full and subsampled).
 
 To measure the efficacy of a given prioritization,
 we compute the number of infections caused by each individual during the 10th year of the simulation (our outcome measure).
@@ -641,10 +642,10 @@ Whether either adjustment results in substantial improvements should be studied 
 
 \subsection{Implications of Results}
 
-We formalized a useful approach for thinking about the effectiveness of public health intervention in molecular epidemics. 
+We formalized a useful approach for thinking about the effectiveness of public health intervention in molecular epidemiology. 
 Instead of focusing on the accuracy of methods of reconstructing phylogenetic trees or transmission networks, a question fraught with difficulties, we asked a more practical question. 
-Given molecular epidemic data, can the methods, whether phylogenetic or clustering-based, prioritize \PLWH{s} for increased attention by public health?
-Using molecular epidemics for prioritization is, of course, not a new idea. For example, \citet{Wertheim2018} presented a method to prioritize \PLWH{s} based on the growth rates of their transmission clusters.
+Given molecular epidemiological data, can the methods, whether phylogenetic or clustering-based, prioritize \PLWH{s} for increased attention by public health?
+Using molecular epidemiology for prioritization is, of course, not a new idea. For example, \citet{Wertheim2018} presented a method to prioritize \PLWH{s} based on the growth rates of their transmission clusters.
 \citet{Vasylyeva2018} performed a phylogeographic analysis to reconstruct HIV movement among different locations in Ukraine in order to infer region-level risk prioritization.
 Much earlier even, \citet{Mellors1996} predicted HIV patient prognosis by quantifying HIV RNA in plasma; predicted prognosis can subsequently be used as a prioritization rank.
 However, we hope that our formal definition of the problem as a computational question (i.e., prioritization), in addition to our extensive simulations and developed metrics of evaluation, will stir further work in this area. 
@@ -735,7 +736,7 @@ HIV patients are typically sequenced when they first visit a clinic to receive A
 Thus, it is expected that the terminal branch lengths of trees simulated in \citet{Moshiri2018} are artificially longer than would be expected.
 Instead,
 we sample viral sequences from individuals the first time they begin ART (i.e., the first time they enter state AT or CT).
-Our current simulation better captures standards of care in advanced health care systems. 
+Our current simulation better captures standards of care in the health care systems of high-income countries. 
 
 % \subsubsection{Simulated data analysis---}
 % For each simulated sequence dataset,
@@ -827,10 +828,7 @@ This work was supported by the National Institutes of Health (5P30AI027767-28, A
 
 %If your paper has accompanying supplementary data, please include the below statement in your PDF.
 \section{Supplementary Material}
-Data available from the Dryad Digital Repository:
-% \href{http://dx.doi.org/10.5061/dryad.[NNNN]}%
-% {http://dx.doi.org/10.5061/dryad.[NNNN]}.
-\url{http://dx.doi.org/10.5061/dryad.[NNNN]}.
+All experiment data are available online: \url{https://github.com/niemasd/ProACT-Paper-Final}
 
 \bigskip\bigskip
 

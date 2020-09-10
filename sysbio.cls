@@ -200,16 +200,16 @@ j\hspace*{-.5pt}o\hspace*{-.5pt}u\hspace*{-.5pt}r\hspace*{-.5pt}n\hspace*{-.5pt}
 
 \newcommand{\journal}[6]{\def\@jnone{#1}\def\@jntwo{#2}\def\@jnthree{#3}\def\@jnfour{#4}\def\@jnfive{#5}\def\@jnsix{#6}}
 \def\ps@plain{%
-      \def\@oddfoot{\gridpl\copyl}
-      \def\@evnhead{\CROPMARKSA}%
-      \def\@oddhead{\CROPMARKSA
-        \begin{tabular}{@{}l}\\[-20pt]
-        \fontsize{9}{11}\selectfont{\itshape Systematic Biology}
-        (\@bio@year), {\bf \@bio@vol}, \@bio@num,\, {\itshape pp.} \pageref{firstpage}--\pageref{LastPage}\\[-1pt]
-        \fontsize{9}{11}\selectfont{\rm
-        doi:10.1093/sysbio/\jobname}
-        \end{tabular}}
-      \let\@mkboth\markboth
+%      \def\@oddfoot{\gridpl\copyl}
+%      \def\@evnhead{\CROPMARKSA}%
+%      \def\@oddhead{\CROPMARKSA
+%        \begin{tabular}{@{}l}\\[-20pt]
+%        \fontsize{9}{11}\selectfont{\itshape Systematic Biology}
+%        (\@bio@year), {\bf \@bio@vol}, \@bio@num,\, {\itshape pp.} \pageref{firstpage}--\pageref{LastPage}\\[-1pt]
+%        \fontsize{9}{11}\selectfont{\rm
+%        doi:10.1093/sysbio/\jobname}
+%        \end{tabular}}
+%      \let\@mkboth\markboth
 }
 
 \def\ps@myheadings{%

@@ -227,7 +227,7 @@ FUNCTION {format.names}
 
   s num.names$ 'numnames :=
   
-  numnames #6 >
+  numnames #3 >
     {#3 'numnames :=
      #1 'etal :=
     }
@@ -238,7 +238,7 @@ FUNCTION {format.names}
   numnames 'namesleft :=
   { namesleft #0 > }
 
-  {s nameptr "{ll~}{ff}" format.name$ 't :=
+  {s nameptr "{ll~}{f}" format.name$ 't :=
     namesleft #1 >
     {t * ", " * }
     {t}
